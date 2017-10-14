@@ -1,11 +1,13 @@
 package chess.pieces;
 
+import chess.Movements;
 import chess.Player;
 
 /**
  * A base class for chess pieces
  */
 public abstract class Piece {
+
     private final Player owner;
 
     protected Piece(Player owner) {
@@ -24,6 +26,8 @@ public abstract class Piece {
     public Player getOwner() {
         return owner;
     }
+
+    public abstract Movements getMovements();
 
     protected abstract char getIdentifyingCharacter();
 }

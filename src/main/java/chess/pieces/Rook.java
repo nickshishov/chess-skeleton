@@ -1,5 +1,6 @@
 package chess.pieces;
 
+import chess.Movements;
 import chess.Player;
 
 /**
@@ -14,5 +15,10 @@ public class Rook extends Piece {
     @Override
     protected char getIdentifyingCharacter() {
         return 'r';
+    }
+
+    @Override
+    public Movements getMovements() {
+        return Movements.QUEEN;
     }
 }

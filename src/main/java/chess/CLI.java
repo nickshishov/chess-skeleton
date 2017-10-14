@@ -13,7 +13,7 @@ public class CLI {
     private final BufferedReader inReader;
     private final PrintStream outStream;
 
-    private GameState gameState = null;
+    private Game game;
 
     public CLI(InputStream inputStream, PrintStream outStream) {
         this.inReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -48,7 +48,7 @@ public class CLI {
 
         while (true) {
             showBoard();
-            writeOutput(gameState.getCurrentPlayer() + "'s Move");
+            writeOutput(game.getCurrentPlayer() + "'s Move");
 
             String input = getInput();
             if (input == null) {
@@ -61,8 +61,9 @@ public class CLI {
                 } else if (input.equals("quit")) {
                     writeOutput("Goodbye!");
                     System.exit(0);
-                } else if (input.equals("board")) {
+                } else if (input.equals("movements")) {
                     writeOutput("Current Game:");
+                    writeOutput(game.getPossibleMovements().toString());
                 } else if (input.equals("list")) {
                     writeOutput("====> List Is Not Implemented (yet) <====");
                 } else if (input.startsWith("move")) {
@@ -75,8 +76,7 @@ public class CLI {
     }
 
     private void doNewGame() {
-        gameState = new GameState();
-        gameState.reset();
+        game = new Game();
     }
 
     private void showBoard() {
@@ -88,13 +88,13 @@ public class CLI {
         writeOutput("    'help'                       Show this menu");
         writeOutput("    'quit'                       Quit Chess");
         writeOutput("    'new'                        Create a new game");
-        writeOutput("    'board'                      Show the chess board");
+        writeOutput("    'movements'                  Show the chess movements");
         writeOutput("    'list'                       List all possible moves");
         writeOutput("    'move <colrow> <colrow>'     Make a move");
     }
 
     /**
-     * Display the board for the user(s)
+     * Display the movements for the user(s)
      */
     String getBoardAsString() {
         StringBuilder builder = new StringBuilder();
@@ -115,9 +115,10 @@ public class CLI {
 
     private void printSquares(int rowLabel, StringBuilder builder) {
         builder.append(rowLabel);
+        Board board = game.getBoard();
 
-        for (char c = Position.MIN_COLUMN; c <= Position.MAX_COLUMN; c++) {
-            Piece piece = gameState.getPieceAt(String.valueOf(c) + rowLabel);
+        for (int c = Position.MIN_COLUMN; c <= Position.MAX_COLUMN; c++) {
+            Piece piece = board.getPieceAt(new Position(c, rowLabel));
             char pieceChar = piece == null ? ' ' : piece.getIdentifier();
             builder.append(" | ").append(pieceChar);
         }
@@ -130,8 +131,8 @@ public class CLI {
 
     private void printColumnLabels(StringBuilder builder) {
         builder.append("   ");
-        for (char c = Position.MIN_COLUMN; c <= Position.MAX_COLUMN; c++) {
-            builder.append(" ").append(c).append("  ");
+        for (int c = Position.MIN_COLUMN; c <= Position.MAX_COLUMN; c++) {
+            builder.append(" ").append((char) (c + 'a' - 1)).append("  ");
         }
 
         builder.append(NEWLINE);
